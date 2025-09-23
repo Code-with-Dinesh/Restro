@@ -7,7 +7,9 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import AdminLayout from './Layout/Adminlayout'
 import Dashboard from './pages/Dashboard'
-
+import Users from './pages/admin/Users'
+import Orders from './pages/admin/Orders'
+import Items from './pages/admin/Items'
 const App = () => {
   const role = "admin"
   return (
@@ -15,6 +17,9 @@ const App = () => {
 
       <Route path="/admin" element={<AdminLayout role={role}/>}>
          <Route index element={<Dashboard role={role}/>}/>
+         <Route path="/admin/orders" element={<Orders/>}/>
+         <Route path="/admin/restaurant-items" element={<Items/>}/>
+         <Route path="/admin/users" element={<Users/>}/>
       </Route>
       {/* Routes without MainLayout */}
       <Route path="/login" element={<Login />} />
