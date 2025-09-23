@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Cuisines from "../components/Cuisines";
 export default function Home() {
   return (
+    <>
+    
+   
     <div className="relative max-w-full h-[70vh] flex items-center justify-start overflow-hidden bg-amber-400">
       {/* Unsplash Dish Image */}
       <img
@@ -26,5 +30,7 @@ export default function Home() {
         </button></Link>
       </div>
     </div>
+     <Cuisines/>
+     </>
   );
 }
