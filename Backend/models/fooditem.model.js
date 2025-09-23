@@ -2,10 +2,16 @@ import mongoose from "mongoose";
 
 const foodItemSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  description: String,
+  description: {
+    type:String,
+    required:true
+  },
   price: { type: Number, required: true },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-  image: String,
+  image: {
+    type:String,
+    required:true
+  },
   availability: { type: Boolean, default: true },
   options: { half: Number, full: Number } 
 }, { timestamps: true });
