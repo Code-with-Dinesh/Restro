@@ -1,8 +1,11 @@
 import React from 'react'
+import Signup from './pages/Signup'
 
 const App = () => {
   return (
-    <div className='bg-red-600'>App</div>
+    <div className=''>
+      <Signup/>
+    </div>
   )
 }
 
