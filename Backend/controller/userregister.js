@@ -32,6 +32,54 @@ export const register = async (req, res, next) => {
 
   } catch (error) {
     console.error("Error while registering user:", error);
-    next(error); // pass error to global error handler
+    next(error); 
+  }
+};
+
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      throw new ApiError(400, "All fields are required");
+    }
+
+    const existencuser = await user.findOne({ email });
+    if (!existencuser) throw new ApiError(400, "This email does not exist");
+
+    const isPasswordValid = await existencuser.comparePassword(password);
+    if (!isPasswordValid) throw new ApiError(400, "Invalid credentials");
+
+    
+    const accessToken = await existencuser.generateAccessToken();
+    const refreshToken = await existencuser.generateRefreshToken();
+
+   
+    const accessTokenOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000, 
+    };
+
+    const refreshTokenOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, 
+    };
+
+    
+    res
+      .cookie("accessToken", accessToken, accessTokenOptions)
+      .cookie("refreshToken", refreshToken, refreshTokenOptions)
+      .status(200)
+      .json({
+        success: true,
+        message: "You are successfully logged in",
+      });
+
+  } catch (err) {
+    next(err);
   }
 };
