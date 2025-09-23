@@ -1,21 +1,21 @@
 import React from "react";
 import { motion } from "framer-motion";
-
+import { Link } from "react-router-dom";
 export default function Signup() {
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
-      {/* Left Section with Restaurant SVG */}
-      <div className="md:w-1/2 flex items-center justify-center p-8">
+    <div className="h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-y-hidden">
+      
+      {/* Left Section with SVG */}
+      <div className="md:w-1/2 flex items-center justify-center">
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
+          initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-md"
+          className="max-w-md text-center"
         >
-          {/* Restaurant Themed SVG: Fork + Spoon + Plate */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-64 h-64 mx-auto text-orange-400 drop-shadow-lg"
+            className="w-52 h-52 mx-auto text-orange-400 drop-shadow-lg"
             viewBox="0 0 64 64"
             fill="currentColor"
           >
@@ -34,22 +34,22 @@ export default function Signup() {
             />
           </svg>
 
-          <h1 className="text-3xl font-bold text-center mt-6 text-orange-400">
+          <h1 className="text-3xl font-bold mt-6 text-orange-400">
             Welcome to RestoHub
           </h1>
-          <p className="text-center text-gray-400 mt-2">
+          <p className="text-gray-400 mt-2">
             Fresh flavors, delivered to your door 🍽️
           </p>
         </motion.div>
       </div>
 
       {/* Right Section with Form */}
-      <div className="md:w-1/2 flex items-center justify-center p-8">
+      <div className="md:w-1/2 flex items-center justify-center">
         <motion.div
-          initial={{ opacity: 0, x: 50 }}
+          initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-full max-w-md bg-gray-800/60 backdrop-blur-md p-8 rounded-2xl shadow-lg"
+          className="w-full max-w-md bg-gray-800/60 backdrop-blur-md p-8 rounded-2xl shadow-lg mx-4"
         >
           <h2 className="text-2xl font-semibold text-center text-orange-400">
             Create Your Account
@@ -75,7 +75,7 @@ export default function Signup() {
               />
             </div>
 
-            {/* Password */}
+            
             <div>
               <label className="block text-sm mb-1">Password</label>
               <input
@@ -83,13 +83,6 @@ export default function Signup() {
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
-            </div>
-
-            {/* Forgot Password */}
-            <div className="flex justify-end">
-              <a href="/forgot-password" className="text-sm text-orange-400 hover:underline">
-                Forgot Password?
-              </a>
             </div>
 
             {/* Submit */}
@@ -103,9 +96,9 @@ export default function Signup() {
 
           <p className="text-center text-gray-400 text-sm mt-4">
             Already have an account?{" "}
-            <a href="/login" className="text-orange-400 hover:underline">
+            <Link to="/login" className="text-orange-400 hover:underline">
               Login
-            </a>
+            </Link>
           </p>
         </motion.div>
       </div>
