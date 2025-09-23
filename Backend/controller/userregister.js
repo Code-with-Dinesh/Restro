@@ -83,3 +83,25 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+
+export const logout =  async(req,res,next)=>{
+   try {
+     const options = {
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+  };
+  res.clearCookie("accessToken", options);
+  res.clearCookie("refreshToken", options);
+
+  return res.status(200).json({
+    success: true,
+    message: "User logged out successfully",
+  });
+   } catch (error) {
+      
+      next(error)
+   }
+}
