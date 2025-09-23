@@ -14,7 +14,7 @@ const App = () => {
     <Routes>
 
       <Route path="/admin" element={<AdminLayout role={role}/>}>
-         <Route index element={<Dashboard/>}/>
+         <Route index element={<Dashboard role={role}/>}/>
       </Route>
       {/* Routes without MainLayout */}
       <Route path="/login" element={<Login />} />

@@ -1,20 +1,25 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
+
 
 export default function AdminLayout({ role }) {
+    
   return (
-    <div className="flex min-h-screen bg-gray-800 text-white">
-      {/* Sidebar */}
-      <Sidebar role={role} />
+    <div className="flex h-screen bg-gray-800 text-white">
+      
+      <div className="h-screen sticky top-0">
+        <Sidebar role={role} />
+      </div>
 
-      {/* Main content */}
+    
       <div className="flex-1 flex flex-col">
-        <div className="flex-1 p-6">
-          <Outlet />
+       
+        <div className="flex-1 overflow-auto p-6">
+          <Outlet role={role} />
         </div>
-        <Footer />
+
+       
       </div>
     </div>
   );

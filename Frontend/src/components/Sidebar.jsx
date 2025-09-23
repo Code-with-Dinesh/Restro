@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 const Sidebar = ({role}) => {
     const adminLinks = [
-    {name:"Dashboard",path:"/admin/dashboard"},
+    {name:"Dashboard",path:"/admin"},
     {name:"Users" ,path:"/admin/users"},
     { name: "Restaurant Items", path: "/admin/restaurant-items" }, 
     { name: "Orders", path: "/admin/orders" }, 
