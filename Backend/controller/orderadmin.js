@@ -4,7 +4,7 @@ import ApiError from "../utils/ApiError.js";
 
 export const allorders = async(req,res,next)=>{
     try {
-        const order = await orderModel.find().populate('user','name email').populate("item.food","name price")
+        const order = await orderModel.find() // todo we populate teh data 
          res.status(200).json({success:true,message:"Fetch order successfully",data:order})
     } catch (error) {
         next(error)
