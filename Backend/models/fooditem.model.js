@@ -13,7 +13,10 @@ const foodItemSchema = new mongoose.Schema({
     required:true
   },
   availability: { type: Boolean, default: true },
-  options: { half: Number, full: Number } 
+  options: { half: Number, full: Number } ,
+  public_id:{
+    type:String
+  }
 }, { timestamps: true });
 
 export default mongoose.model("FoodItem", foodItemSchema);

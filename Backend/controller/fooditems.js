@@ -43,7 +43,7 @@ export const deletecategory = async(req,res,next)=>{
   try {
       const { id } = req.params;
       const category = await categoryMode.findById(id)
-      console.log(category)
+
       if(!category){
         throw new ApiError(404,"Category not found")
       }
@@ -92,6 +92,7 @@ export const additem = async (req, res, next) => {
       availabilty,
       image: result.secure_url,
       options,
+      public_id:result.public_id,
     });
     res
       .status(201)
@@ -104,3 +105,26 @@ export const additem = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteitem = async(req,res,next)=>{
+  try {
+      const {id} = req.params;
+      if(!id){
+        throw new ApiError(400,"Id is required")
+      }
+      const fooditem = await fooditemModel.findById(id)
+      if(!fooditem){
+        throw new ApiError(404,"Fooditem not found")
+      }
+      if(fooditem.public_id){
+        await cloudinary.uploader.destroy(fooditem.public_id)
+      }
+       await fooditemModel.findByIdAndDelete(id)
+          res.status(200).json({
+          success: true,
+          message: "Food item deleted successfully",
+    });
+  } catch (error) {
+     next(error)
+  }
+}
