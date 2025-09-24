@@ -3,6 +3,7 @@ import { login, logout, register } from '../controller/userregister.js';
 import { addcategory, additem, deletecategory, deleteitem, updateitem } from '../controller/fooditems.js';
 import upload from '../middleware.js/multer.js';
 import { authmiddleware } from '../middleware.js/auth.js';
+import { allorders } from '../controller/orderadmin.js';
 const router = express.Router();
 
 router.post('/register', register);
@@ -13,4 +14,5 @@ router.post('/additem',upload.single("image"),additem)
 router.delete("/deletecategory/:id",authmiddleware,deletecategory)
 router.delete("/fooditem/:id",authmiddleware,deleteitem)
 router.put("/updteitem/:id",upload.single("image"),updateitem)
+router.get("/allorders",allorders)
 export default router;
