@@ -128,3 +128,52 @@ export const deleteitem = async(req,res,next)=>{
      next(error)
   }
 }
+
+export const updateitem = async (req, res, next) => {
+  try {
+    const { name, description, price, category, availability, options } = req.body;
+    const { id } = req.params;
+
+    const fooditem = await fooditemModel.findById(id);
+    if (!fooditem) {
+      throw new ApiError(404, "No food item found");
+    }
+
+    // Update fields
+    if (name) fooditem.name = name;
+    if (description) fooditem.description = description;
+    if (price) fooditem.price = price;
+    if (category) fooditem.category = category;
+    if (availability !== undefined) fooditem.availability = availability;
+    if (options) fooditem.options = typeof options === "string" ? JSON.parse(options) : options;
+
+    // Upload new image if file provided
+    if (req.file) {
+      // Delete old image from Cloudinary
+      if (fooditem.public_id) {
+        await cloudinary.uploader.destroy(fooditem.public_id);
+      }
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "foodItems",
+      });
+
+      fooditem.image = result.secure_url;
+      fooditem.public_id = result.public_id;
+    }
+
+     fs.unlink(req.file.path, (err) => {
+      if (err) {
+        console.log("Error while uploads the fooditem", err);
+      } else {
+        console.log("Local file deleted:", req.file.path);
+      }
+    });
+
+    await fooditem.save();
+
+    res.status(200).json({ success: true, message: "Food item updated successfully", fooditem });
+  } catch (error) {
+    next(error);
+  }
+};
