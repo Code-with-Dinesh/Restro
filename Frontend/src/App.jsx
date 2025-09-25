@@ -10,12 +10,16 @@ import Dashboard from './pages/Dashboard'
 import Users from './pages/admin/Users'
 import Orders from './pages/admin/Orders'
 import Items from './pages/admin/Items'
+import ProtectedRoute from './components/ProtectedRoute'
+import  { Toaster } from 'react-hot-toast';
+
 const App = () => {
   const role = "admin"
   return (
+    <>
     <Routes>
 
-      <Route path="/admin" element={<AdminLayout role={role}/>}>
+      <Route path="/admin" element={ <ProtectedRoute requiredRole={role} > <AdminLayout role={role}/> </ProtectedRoute>}>
          <Route index element={<Dashboard role={role}/>}/>
          <Route path="/admin/orders" element={<Orders/>}/>
          <Route path="/admin/restaurant-items" element={<Items/>}/>
@@ -32,6 +36,9 @@ const App = () => {
         
       </Route>
     </Routes>
+
+    <Toaster/>
+    </>
   )
 }
 

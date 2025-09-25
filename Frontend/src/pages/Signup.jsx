@@ -1,10 +1,32 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Axios } from "axios";
+import axiosInstance from "../api/axiosinstance.js";
+import useAuthStore from "../store/authstore";
+import toast from 'react-hot-toast';
 export default function Signup() {
+  const navigate = useNavigate()
+  const {setUser} = useAuthStore()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  const onSubmit = async(userdata) => {
+   const result = await axiosInstance.post("/register",userdata,{
+      withCredentials:true,
+    })
+    console.log(result)
+     setUser(result.data.user)
+     toast.success("Successfully Signup")
+     navigate("/login")
+  };
+
   return (
     <div className="h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-y-hidden">
-      
       {/* Left Section with SVG */}
       <div className="md:w-1/2 flex items-center justify-center">
         <motion.div
@@ -28,10 +50,7 @@ export default function Signup() {
               strokeLinejoin="round"
               fill="none"
             />
-            <path
-              d="M44 32a4 4 0 118 0 4 4 0 01-8 0z"
-              fill="currentColor"
-            />
+            <path d="M44 32a4 4 0 118 0 4 4 0 01-8 0z" fill="currentColor" />
           </svg>
 
           <h1 className="text-3xl font-bold mt-6 text-orange-400">
@@ -54,15 +73,19 @@ export default function Signup() {
           <h2 className="text-2xl font-semibold text-center text-orange-400">
             Create Your Account
           </h2>
-          <form className="mt-6 space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5">
             {/* Name */}
             <div>
               <label className="block text-sm mb-1">Name</label>
               <input
+                {...register("name", { required: "Name is required" })}
                 type="text"
                 placeholder="Enter your name"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
+              {errors.name && (
+                <p className="text-red-500">{errors.name.message}</p>
+              )}
             </div>
 
             {/* Email */}
@@ -70,19 +93,27 @@ export default function Signup() {
               <label className="block text-sm mb-1">Email</label>
               <input
                 type="email"
+                {...register("email", { required: "Email is required" })}
                 placeholder="Enter your email"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
-            
+            {/* Password */}
             <div>
               <label className="block text-sm mb-1">Password</label>
               <input
                 type="password"
+                {...register("password", { required: "Password is required" })}
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
+              {errors.password && (
+                <p className="text-red-500">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Submit */}
@@ -90,7 +121,7 @@ export default function Signup() {
               type="submit"
               className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition shadow-md font-semibold"
             >
-              Sign Up
+              {isSubmitting ? "Signing up..." : "Signup"}
             </button>
           </form>
 
