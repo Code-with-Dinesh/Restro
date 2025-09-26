@@ -69,3 +69,37 @@ export const getcart = async(req,res,next)=>{
     next(error)
   }
 }
+
+export const removecart = async(req,res,next)=>{
+  try {
+    const { cartItemId } = req.params;
+
+    if(!cartItemId){
+      throw new ApiError(400,"item id is required")
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId)
+    
+    if(!user){
+      throw new ApiError(400,"User not found")
+    }
+    const item = user.cart.id(cartItemId)
+    
+     if (!item) throw new ApiError(404, "Cart item not found");
+     
+
+      const initialLength = user.cart.length;
+      user.cart = user.cart.filter(item => item._id.toString() !== cartItemId);
+
+      if (user.cart.length === initialLength) {
+      throw new ApiError(404, "Cart item not found");
+    }
+
+     await user.save()
+     res.status(200).json({success:true,message:'item delete successfully'})
+  } catch (error) {
+     next(error)
+  }
+ 
+
+}
