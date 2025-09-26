@@ -13,7 +13,8 @@ const cartschema = mongoose.Schema({
         type:String,
         enum: ["half", "full"], default: "full"
     },
-     totalPrice: { type: Number }
+     
+    totalPrice: { type: Number, required: true, default: 0 },
 })
 
 

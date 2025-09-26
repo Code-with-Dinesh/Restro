@@ -1,50 +1,57 @@
 import ApiError from "../utils/ApiError.js";
-import UserSchema from "../models/user.model.js";
-import FoodSchema from "../models/fooditem.model.js";
+import User from "../models/user.model.js";
+import FoodItem from "../models/fooditem.model.js";
 
 export const addcart = async (req, res, next) => {
   try {
-    const { foodId, option, quantity } = req.body; 
-    const userId = req.user._id;
+    const { foodId, options, quantity } = req.body; 
+    const userId = req.user;
 
-    if (!foodId || !option || !quantity) {
+    if (!foodId || !options || !quantity) {
       throw new ApiError(400, "All fields are required");
     }
 
+    // Find user
+    const user = await User.findById(userId).populate("cart.food");
+    if (!user) throw new ApiError(404, "User not found");
+
+    // Find food item
+    const food = await FoodItem.findById(foodId);
+    if (!food) throw new ApiError(404, "Food item does not exist");
     
-    const user = await UserSchema.findById(userId).populate("cart.food");
-    if (!user) {
-      throw new ApiError(404, "User not found");
+    console.log(food)
+    // Get price safely
+    const itemPrice = options === "half" ? food.options?.half : food.options?.full;
+    console.log(itemPrice,"your aite msdfaprieffdd")
+    if (typeof itemPrice !== "number") {
+      throw new ApiError(400, "Invalid option or price not available");
     }
 
-   
-    const food = await FoodSchema.findById(foodId);
-    if (!food) {
-      throw new ApiError(404, "Food item does not exist");
-    }
-
-    
-    const itemPrice = option === "half" ? food.halfPrice : food.fullPrice;
-
-   
+    // Check if the item already exists in cart
     const existingItemIndex = user.cart.findIndex(
-      (item) => item.food._id.toString() === foodId && item.option === option
+      (item) => item.food._id.toString() === foodId && item.options === options
     );
-
+     console.log(existingItemIndex,"yourindex")
     if (existingItemIndex > -1) {
-      user.cart[existingItemIndex].quantity += quantity;
-      user.cart[existingItemIndex].totalPrice = itemPrice * user.cart[existingItemIndex].quantity;
+      
+       const existingItem = user.cart[existingItemIndex];
+      existingItem.quantity += Number(quantity); 
+
+       existingItem.totalPrice = itemPrice * existingItem.quantity;
     } else {
+      // Add new item
       user.cart.push({
         food: foodId,
         quantity,
-        option,
-        totalPrice: itemPrice * quantity, // store total for new item
+        options,
+        totalPrice: itemPrice * quantity
       });
     }
 
     await user.save();
+
     res.status(200).json(user.cart);
+
   } catch (error) {
     next(error);
   }
