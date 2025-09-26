@@ -22,7 +22,7 @@ export const addcart = async (req, res, next) => {
     console.log(food)
     
     const itemPrice = options === "half" ? food.options?.half : food.options?.full;
-    console.log(itemPrice,"your aite msdfaprieffdd")
+    
     if (typeof itemPrice !== "number") {
       throw new ApiError(400, "Invalid option or price not available");
     }
@@ -31,11 +31,11 @@ export const addcart = async (req, res, next) => {
     const existingItemIndex = user.cart.findIndex(
       (item) => item.food._id.toString() === foodId && item.options === options
     );
-     console.log(existingItemIndex,"yourindex")
+     
     if (existingItemIndex > -1) {
       
        const existingItem = user.cart[existingItemIndex];
-      existingItem.quantity += Number(quantity); 
+       existingItem.quantity += Number(quantity); 
 
        existingItem.totalPrice = itemPrice * existingItem.quantity;
     } else {
@@ -56,3 +56,16 @@ export const addcart = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getcart = async(req,res,next)=>{
+  try {
+      const userId = req.user._id;
+     const cartitem = await User.findById(userId).populate({path:'cart.food',select:'name price image'}).select("-password")
+     if(!cartitem){
+      throw new ApiError(404,"user not found")
+     }
+     res.status(200).json({success:true,message:"Fetching the cart item successfully",data:cartitem})
+  } catch (error) {
+    next(error)
+  }
+}

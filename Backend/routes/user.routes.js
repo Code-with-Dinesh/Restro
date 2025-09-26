@@ -4,7 +4,7 @@ import { addcategory, additem, deletecategory, deleteitem, updateitem } from '..
 import upload from '../middleware.js/multer.js';
 import { authmiddleware } from '../middleware.js/auth.js';
 import { allorders, updatorderstatus } from '../controller/orderadmin.js';
-import { addcart } from '../controller/usercart.js';
+import { addcart, getcart } from '../controller/usercart.js';
 const router = express.Router();
 
 router.post('/register', register);
@@ -17,7 +17,8 @@ router.delete("/fooditem/:id",authmiddleware,deleteitem)
 router.put("/updteitem/:id",upload.single("image"),updateitem)
 router.get("/allorders",allorders)
 router.put("/updateorder/:id",updatorderstatus)
-            
+
 // cart api 
 router.post('/addcart',authmiddleware,addcart)
+router.get("/getcart",authmiddleware,getcart)
 export default router;
