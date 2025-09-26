@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
+import cartschema from "./cartSchema.js";
+
+
 const userSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -8,6 +11,7 @@ const userSchema = mongoose.Schema(
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "user"], default: "user" },
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "FoodItem" }],
+    cart:[cartschema],
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
   },
