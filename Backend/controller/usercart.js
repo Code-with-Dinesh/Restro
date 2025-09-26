@@ -74,6 +74,9 @@ export const removecart = async(req,res,next)=>{
   try {
     const { cartItemId } = req.params;
 
+
+
+    
     if(!cartItemId){
       throw new ApiError(400,"item id is required")
     }
