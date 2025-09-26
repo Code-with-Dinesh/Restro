@@ -1,25 +1,58 @@
-import mongoose from "mongoose";
+import ApiError from "../utils/ApiError.js";
+import UserSchema from "../models/user.model.js";
+import FoodSchema from "../models/fooditem.model.js";
 
-const foodItemSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    description: {
-      type: String,
-      required: true,
-    },
-    price: { type: Number, required: true },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-    image: {
-      type: String,
-      required: true,
-    },
-    availability: { type: Boolean, default: true },
-    options: { half: Number, full: Number },
-    public_id: {
-      type: String,
-    },
-  },
-  { timestamps: true }
-);
+export const addcart = async (req, res, next) => {
+  try {
+    const { foodId, option, quantity } = req.body; // request data
+    const userId = req.user._id;
 
-export default mongoose.model("FoodItem", foodItemSchema);
+    // Validate input
+    if (!foodId || !option || !quantity) {
+      throw new ApiError(400, "All fields are required");
+    }
+
+    // Find user
+    const user = await UserSchema.findById(userId).populate("cart.food");
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    // Find food item
+    const food = await FoodSchema.findById(foodId);
+    if (!food) {
+      throw new ApiError(404, "Food item does not exist");
+    }
+
+    // Get price from options object
+    const itemPrice = option === "half" ? food.options.half : food.options.full;
+
+    // Check if the item already exists in cart with same option
+    const existingItemIndex = user.cart.findIndex(
+      (item) => item.food._id.toString() === foodId && item.option === option
+    );
+
+    if (existingItemIndex > -1) {
+      // Update existing item quantity & totalPrice
+      user.cart[existingItemIndex].quantity += quantity;
+      user.cart[existingItemIndex].totalPrice = itemPrice * user.cart[existingItemIndex].quantity;
+    } else {
+      // Add new item to cart
+      user.cart.push({
+        food: foodId,
+        quantity,
+        option,
+        totalPrice: itemPrice * quantity
+      });
+    }
+
+    // Save user document
+    await user.save();
+
+    // Send updated cart
+    res.status(200).json(user.cart);
+
+  } catch (error) {
+    next(error);
+  }
+};
