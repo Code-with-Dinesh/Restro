@@ -8,7 +8,7 @@ const Sidebar = ({role}) => {
     { name: "Orders", path: "/admin/orders" }, 
     ]
     const userLinks = [
-    { name: "Dashboard", path: "/user/dashboard" },
+    { name: "Dashboard", path: "/user" },
     { name: "My Orders", path: "/user/orders" }, 
     { name: "Settings", path: "/user/settings" },
     ]

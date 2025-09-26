@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Axios } from "axios";
+
 import axiosInstance from "../api/axiosinstance.js";
 import useAuthStore from "../store/authstore";
 import toast from 'react-hot-toast';

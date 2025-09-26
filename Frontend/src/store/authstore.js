@@ -6,25 +6,27 @@ const useAuthStore = create(
     (set) => ({
       user: null,
       isAuthenticated: false,
+      role: null,
 
-      
-      setUser: (user) =>
+      setUser: (user) => {
+        console.log("Setting user:", user); // DEBUG
         set({
-          user,
-          isAuthenticated: true,
-        }),
+          user: user || null,
+          isAuthenticated: !!user,        // <-- true if user exists
+          role: user?.role ?? "user",     // <-- default to "user"
+        });
+      },
 
-     
-      clearUser: () =>
+      clearUser: () => {
+        console.log("Clearing user"); // DEBUG
         set({
           user: null,
           isAuthenticated: false,
-        }),
+          role: null,
+        });
+      },
     }),
-    {
-      name: "auth-storage", 
-     
-    }
+    { name: "auth-storage" }
   )
 );
 

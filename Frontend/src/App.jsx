@@ -12,30 +12,45 @@ import Orders from './pages/admin/Orders'
 import Items from './pages/admin/Items'
 import ProtectedRoute from './components/ProtectedRoute'
 import  { Toaster } from 'react-hot-toast';
-
+import PublicRoute from './components/PublicRoute'
+import useAuthStore from './store/authstore'
+import Pagenotfound from './pages/Pagenotfound'
+import UserDashboard from './pages/user/UserDashboard'
+import Myorder from './pages/user/Myorder'
+import Setting from "./pages/user/Setting"
 const App = () => {
-  const role = "admin"
+  const {role,isAuthenticated} = useAuthStore()
+  console.log("your arole is ",role)
   return (
     <>
     <Routes>
-
-      <Route path="/admin" element={ <ProtectedRoute requiredRole={role} > <AdminLayout role={role}/> </ProtectedRoute>}>
+      {isAuthenticated && role === "admin" && (<Route path="/admin" element={ <ProtectedRoute requiredRole={role}><AdminLayout role={role}/> </ProtectedRoute>}>
          <Route index element={<Dashboard role={role}/>}/>
-         <Route path="/admin/orders" element={<Orders/>}/>
-         <Route path="/admin/restaurant-items" element={<Items/>}/>
-         <Route path="/admin/users" element={<Users/>}/>
-      </Route>
+         <Route path="orders" element={<Orders/>}/>
+         <Route path="restaurant-items" element={<Items/>}/>
+         <Route path="users" element={<Users/>}/>
+      </Route>)}
+      
+        
+        {isAuthenticated && role === "user" && ( <Route path="/user" element={<ProtectedRoute requiredRole={role}><AdminLayout role={role} /></ProtectedRoute>}>
+       <Route index element={<UserDashboard role={role}/>}/>
+       <Route path='orders' element={<Myorder/>} />
+       <Route path="settings" element={<Setting/>}/>
+       </Route>)}
+      
+
       {/* Routes without MainLayout */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Signup />} />
+      <Route path="/login" element={ <PublicRoute> <Login /></PublicRoute>} />
+      <Route path="/register" element={<PublicRoute><Signup /></PublicRoute>} />
 
       {/* Routes with MainLayout */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />  
         <Route path="menu" element={<Menu />} />  
-        
       </Route>
-    </Routes>
+
+      <Route path='*' element={<Pagenotfound/>}/>
+      </Routes>
 
     <Toaster/>
     </>

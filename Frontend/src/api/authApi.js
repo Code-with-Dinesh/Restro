@@ -9,3 +9,8 @@ export const loginApi = async(userdata)=>{
     const res = await axiosInstance.post("/login",userdata)
     return res.data;
 }
+
+export const logoutApi = async()=>{
+    const res = await axiosInstance.post('/logout')
+    return res.data;
+}

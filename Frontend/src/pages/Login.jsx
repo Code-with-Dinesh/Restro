@@ -1,8 +1,32 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import axiosInstance from "../api/axiosinstance.js";
+import useAuthStore from "../store/authstore";
+import toast from "react-hot-toast";
 
 export default function Login() {
+  const navigate = useNavigate()
+  const {setUser} = useAuthStore()
+   const {register,handleSubmit,formState:{errors,isSubmitting}} = useForm()
+
+   const onsubmit = async(userdata)=>{
+     try {
+      const res = await axiosInstance.post('/login',userdata,{
+      withCredentials:true,
+     })
+     if (res.data) {
+      setUser(res.data); 
+      console.log("Updated role:", res.data.role);
+      toast.success("successfull Login")
+      navigate("/");
+    }
+     } catch (error) {
+        toast.error(error.message)
+     }
+     
+   }
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
       {/* Left Section with Chef Hat SVG */}
@@ -45,15 +69,17 @@ export default function Login() {
           <h2 className="text-2xl font-semibold text-center text-orange-400">
             Login to Your Account
           </h2>
-          <form className="mt-6 space-y-5">
+          <form onSubmit={handleSubmit(onsubmit)} className="mt-6 space-y-5">
             {/* Email */}
             <div>
               <label className="block text-sm mb-1">Email</label>
               <input
                 type="email"
+                {...register("email",{required:"Email is required"})}
                 placeholder="Enter your email"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
+              {errors.email && <p className="text-red-500">{errors.name.message}</p>}
             </div>
 
             {/* Password */}
@@ -61,9 +87,12 @@ export default function Login() {
               <label className="block text-sm mb-1">Password</label>
               <input
                 type="password"
+                {...register("password",{required:"password is required"})}
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
+                  {errors.email && <p className="text-red-500">{errors.name.message}</p>}
+
             </div>
 
             {/* Forgot Password */}
@@ -78,7 +107,7 @@ export default function Login() {
               type="submit"
               className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 transition shadow-md font-semibold"
             >
-              Login
+              {isSubmitting ? "Login..." : "Login"}
             </button>
           </form>
 
