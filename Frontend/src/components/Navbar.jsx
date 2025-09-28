@@ -9,14 +9,14 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const  isAuthenticated = useAuthStore((state)=>state.isAuthenticated)
   const clearUser = useAuthStore((state)=>state.clearUser)
-  console.log(isAuthenticated,clearUser)
+  
   const removHandler = async () => {
     try {
       const res = await axiosInstance.post("/logout", {}, { withCredentials: true });
       console.log(res.data);
       clearUser();
        const state = useAuthStore.getState();
-        console.log("After logout:", state);
+       
       toast.success("Logout Successfully");
       navigate("/login");
     } catch (error) {

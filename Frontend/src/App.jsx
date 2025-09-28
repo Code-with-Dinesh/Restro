@@ -20,7 +20,7 @@ import Myorder from './pages/user/Myorder'
 import Setting from "./pages/user/Setting"
 const App = () => {
   const {role,isAuthenticated} = useAuthStore()
-  console.log("your arole is ",role)
+  
   return (
     <>
     <Routes>

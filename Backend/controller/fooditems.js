@@ -39,6 +39,26 @@ export const addcategory = async (req, res, next) => {
   }
 };
 
+//get category
+export const getcategory = async (req, res, next) => {
+  try {
+    const allcategories = await categoryMode.find();
+
+    if (allcategories.length === 0) {
+      throw new ApiError(404, "No categories found");
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Categories fetched successfully",
+      data: allcategories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 export const deletecategory = async(req,res,next)=>{
   try {
       const { id } = req.params;
