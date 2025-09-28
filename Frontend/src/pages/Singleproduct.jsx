@@ -41,9 +41,9 @@ const Singleproduct = () => {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen p-6 md:p-12 text-white">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen p-6 md:p-12 text-white">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-        {/* Food Image */}
+       
         <div className="rounded-xl overflow-hidden shadow-lg">
           <img
             src={food.image}
@@ -52,12 +52,12 @@ const Singleproduct = () => {
           />
         </div>
 
-        {/* Food Details */}
+       
         <div>
           <h1 className="text-4xl font-extrabold mb-4">{food.name}</h1>
           <p className="text-gray-300 mb-6">{food.description}</p>
 
-          {/* Price Options */}
+         
           {food.options && (
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-2">Choose Size</h3>
@@ -79,7 +79,7 @@ const Singleproduct = () => {
             </div>
           )}
 
-          {/* Quantity Selector */}
+          
           <div className="flex items-center gap-4 mb-6">
             <h3 className="text-lg font-semibold">Quantity</h3>
             <div className="flex items-center border border-gray-600 rounded-lg">
@@ -99,7 +99,7 @@ const Singleproduct = () => {
             </div>
           </div>
 
-          {/* Price */}
+         
           <p className="text-2xl font-bold text-green-400 mb-6">
             Total: ₹
             {food.options
@@ -107,7 +107,7 @@ const Singleproduct = () => {
               : food.price * quantity}
           </p>
 
-          {/* Add to Cart */}
+         
           <button className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition">
             Add to Cart
           </button>

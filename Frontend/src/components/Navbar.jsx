@@ -37,7 +37,7 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 items-center">
           <Link to="/" className="hover:text-orange-400">Home</Link>
-          <Link to="/menu" className="hover:text-orange-400">Menu</Link>
+         {isAuthenticated ?  <Link to="/user/dashboard" className="hover:text-orange-400">Dashboard</Link>:''}
 
           {isAuthenticated ? (
             <button
