@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Cuisines from "../components/Cuisines";
+import Foodpage from "./Foodpage";
 export default function Home() {
   return (
     <>
@@ -31,6 +32,7 @@ export default function Home() {
       </div>
     </div>
      <Cuisines/>
+     <Foodpage/>
      </>
   );
 }

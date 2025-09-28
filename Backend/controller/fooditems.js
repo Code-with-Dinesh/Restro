@@ -3,6 +3,7 @@ import cloudinary from "../cloudinary/claudinary.js";
 import categoryMode from "../models/category.mode.js";
 import fs from "fs";
 import fooditemModel from "../models/fooditem.model.js";
+import fooditem from "../models/fooditem.model.js";
 // add category
 export const addcategory = async (req, res, next) => {
   try {
@@ -74,6 +75,19 @@ export const deletecategory = async(req,res,next)=>{
       const deletecategory = await categoryMode.findByIdAndDelete(id)
       console.log(deletecategory)
       res.status(200).json({success:true,message:"Successfully delete the cateogry"})
+  } catch (error) {
+     next(error)
+  }
+}
+
+
+export const getfooditem = async(req,res,next)=>{
+  try {
+     const allfoods = await fooditem.find()
+     if(allfoods.length == 0){
+      throw new ApiError(404,"No food items available")
+     }
+     res.status(200).json({success:true,message:"Item fetched successfully",data:allfoods})
   } catch (error) {
      next(error)
   }
