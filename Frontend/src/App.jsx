@@ -18,6 +18,7 @@ import Pagenotfound from './pages/Pagenotfound'
 import UserDashboard from './pages/user/UserDashboard'
 import Myorder from './pages/user/Myorder'
 import Setting from "./pages/user/Setting"
+import Singleproduct from './pages/Singleproduct'
 const App = () => {
   const {role,isAuthenticated} = useAuthStore()
   
@@ -47,6 +48,7 @@ const App = () => {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />  
         <Route path="menu" element={<Menu />} />  
+         <Route path="/fooditem/:id" element={<Singleproduct/>} />  
       </Route>
 
       <Route path='*' element={<Pagenotfound/>}/>

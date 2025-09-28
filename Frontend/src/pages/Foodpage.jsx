@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { getfooditems } from "../api/productapi.js";
+import { Link } from "react-router-dom";
 
 const Foodpage = () => {
   const [fooditem, setfooditem] = useState([]);
@@ -55,9 +56,9 @@ const Foodpage = () => {
             <p className="text-green-400 font-semibold text-lg md:text-xl">
               ₹{food.price} / {food.unit || "plate"}
             </p>
-            <button className="w-full cursor-pointer px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-900 transition shadow-md">
+          <Link to={`/fooditem/${food._id}`}>  <button className="w-full cursor-pointer px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-900 transition shadow-md">
               Add to Cart
-            </button>
+            </button> </Link>
           </div>
         </div>
       </div>

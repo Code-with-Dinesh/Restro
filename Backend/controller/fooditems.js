@@ -93,6 +93,22 @@ export const getfooditem = async(req,res,next)=>{
   }
 }
 
+// single product api
+export const singlefooditem =  async(req,res,next)=>{
+  try {
+      const {id} = req.params;
+      if(!id){
+        throw new ApiError(400,"Id is required")
+      }
+      const food = await fooditemModel.findById(id)
+      if(!food){
+        throw new ApiError(404,"Food is not  Found ")
+      }
+      res.status(200).json({success:true,message:'fetch item successfullly',data:food})
+  } catch (error) {
+    next(err)
+  }
+}
 export const additem = async (req, res, next) => {
   try {
     const { name, description, price, category, availabilty, options } =
