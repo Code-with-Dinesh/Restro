@@ -57,7 +57,7 @@ const Foodpage = () => {
               ₹{food.price} / {food.unit || "plate"}
             </p>
           <Link to={`/fooditem/${food._id}`}>  <button className="w-full cursor-pointer px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-900 transition shadow-md">
-              Add to Cart
+              Order Now
             </button> </Link>
           </div>
         </div>

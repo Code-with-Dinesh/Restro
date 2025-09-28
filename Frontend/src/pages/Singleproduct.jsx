@@ -1,7 +1,45 @@
 import { useParams } from "react-router-dom";
+import { singleprodctapi } from "../api/productapi.js";
+import { useEffect, useState } from "react";
 
 const Singleproduct = () => {
- const foodid = useParams()
+  const { id } = useParams(); 
+  const [food, setFood] = useState(null); 
+  const [loading, setLoading] = useState(true);
+  const [selectedOption, setSelectedOption] = useState("full");
+  const [quantity, setQuantity] = useState(1);
+  useEffect(() => {
+    const fetchSingleProduct = async () => {
+      try {
+        const result = await singleprodctapi(id); 
+        console.log(result.data)
+        setFood(result.data); 
+      } catch (error) {
+        console.log("Error while fetching single product", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSingleProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
+        <p className="text-lg font-semibold">Loading product...</p>
+      </div>
+    );
+  }
+
+  if (!food) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-900 text-white">
+        <p className="text-lg font-semibold">Product not found!</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-900 min-h-screen p-6 md:p-12 text-white">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -20,7 +58,7 @@ const Singleproduct = () => {
           <p className="text-gray-300 mb-6">{food.description}</p>
 
           {/* Price Options */}
-          {true && (
+          {food.options && (
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-2">Choose Size</h3>
               <div className="flex gap-4">
@@ -63,7 +101,10 @@ const Singleproduct = () => {
 
           {/* Price */}
           <p className="text-2xl font-bold text-green-400 mb-6">
-            Total: ₹{food.options ? food.options[selectedOption] * quantity : food.price * quantity}
+            Total: ₹
+            {food.options
+              ? food.options[selectedOption] * quantity
+              : food.price * quantity}
           </p>
 
           {/* Add to Cart */}

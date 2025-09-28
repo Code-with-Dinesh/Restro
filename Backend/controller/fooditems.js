@@ -4,6 +4,7 @@ import categoryMode from "../models/category.mode.js";
 import fs from "fs";
 import fooditemModel from "../models/fooditem.model.js";
 import fooditem from "../models/fooditem.model.js";
+import mongoose from "mongoose";
 // add category
 export const addcategory = async (req, res, next) => {
   try {
@@ -94,21 +95,35 @@ export const getfooditem = async(req,res,next)=>{
 }
 
 // single product api
-export const singlefooditem =  async(req,res,next)=>{
+export const singlefooditem = async (req, res, next) => {
   try {
-      const {id} = req.params;
-      if(!id){
-        throw new ApiError(400,"Id is required")
-      }
-      const food = await fooditemModel.findById(id)
-      if(!food){
-        throw new ApiError(404,"Food is not  Found ")
-      }
-      res.status(200).json({success:true,message:'fetch item successfullly',data:food})
+    const { id } = req.params;
+    console.log("backend id",id)
+    if (!id) {
+      throw new ApiError(400, "Id is required");
+    }
+
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ApiError(400, "Invalid ID format");
+    }
+
+    const food = await fooditemModel.findById(id);
+
+    if (!food) {
+      throw new ApiError(404, "Food is not found");
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Fetched item successfully",
+      data: food,
+    });
   } catch (error) {
-    next(err)
+    next(error);
   }
-}
+};
+
 export const additem = async (req, res, next) => {
   try {
     const { name, description, price, category, availabilty, options } =
