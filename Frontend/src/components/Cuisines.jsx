@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useEffect } from "react";
-import { useState } from "react";
+
 import { getcategories } from "../api/productapi.js";
 import useCategorystore from "../store/categorystore.js";
 export default function Cuisines() {
@@ -22,7 +22,7 @@ export default function Cuisines() {
   },[])
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
+    <div className="max-w-7xl mx-auto px-6 py-12 ">
       <h2 className="text-3xl md:text-4xl font-bold text-orange-400 mb-8 text-center md:text-left">
         Inspiration for Your First Order
       </h2>
