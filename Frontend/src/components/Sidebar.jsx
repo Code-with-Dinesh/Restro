@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 
 const Sidebar = ({ role }) => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate()
   const adminLinks = [
     { name: "Dashboard", path: "/admin" },
     { name: "Users", path: "/admin/users" },
@@ -19,6 +19,8 @@ const Sidebar = ({ role }) => {
   ];
 
   const links = role === "admin" ? adminLinks : userLinks;
+
+  
 
   return (
     <>
@@ -59,9 +61,13 @@ const Sidebar = ({ role }) => {
               {link.name}
             </NavLink>
           ))}
-          <button className="mt-4 mx-6 bg-red-600 text-white rounded-lg px-3 py-2 w-[calc(100%-2rem)] cursor-pointer">
-            Logout
-          </button>
+         <Link
+  to="/"
+  className="mt-4 mx-4 block w-full md:inline-block md:w-auto text-center bg-gray-900 hover:border-1 hover:border-white text-white font-medium rounded-lg px-6 py-2 transition-all duration-200 shadow-md hover:shadow-lg"
+>
+  Go Back
+</Link>
+
         </nav>
       </aside>
 

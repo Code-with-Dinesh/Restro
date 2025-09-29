@@ -1,28 +1,22 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authstore";
-import axiosInstance from "../api/axiosinstance";
+import { logoutApi } from "../api/authApi";
 import toast from "react-hot-toast";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const { role } = useAuthStore();
-  console.log(role);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const clearUser = useAuthStore((state) => state.clearUser);
 
+
   const removHandler = async () => {
     try {
-      const res = await axiosInstance.post(
-        "/logout",
-        {},
-        { withCredentials: true }
-      );
-      console.log(res.data);
+      const res = await logoutApi()
       clearUser();
       const state = useAuthStore.getState();
-
       toast.success("Logout Successfully");
       navigate("/login");
     } catch (error) {
