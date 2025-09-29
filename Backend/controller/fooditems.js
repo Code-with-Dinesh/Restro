@@ -84,7 +84,8 @@ export const deletecategory = async(req,res,next)=>{
 
 export const getfooditem = async(req,res,next)=>{
   try {
-     const allfoods = await fooditem.find()
+     const allfoods = await fooditem.find().populate("category");
+     
      if(allfoods.length == 0){
       throw new ApiError(404,"No food items available")
      }
@@ -158,7 +159,9 @@ export const additem = async (req, res, next) => {
       image: result.secure_url,
       options,
       public_id:result.public_id,
+      category
     });
+    
     res
       .status(201)
       .json({
@@ -204,7 +207,6 @@ export const updateitem = async (req, res, next) => {
       throw new ApiError(404, "No food item found");
     }
 
-    // Update fields
     if (name) fooditem.name = name;
     if (description) fooditem.description = description;
     if (price) fooditem.price = price;

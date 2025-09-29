@@ -15,6 +15,7 @@ router.get("/getcategory",getcategory)
 router.get('/getfooditems',getfooditem)
 router.get("/singlefood/:id",singlefooditem)
 router.post('/additem',upload.single("image"),additem)
+
 router.delete("/deletecategory/:id",authmiddleware,deletecategory)
 router.delete("/fooditem/:id",authmiddleware,deleteitem)
 router.put("/updteitem/:id",upload.single("image"),updateitem)

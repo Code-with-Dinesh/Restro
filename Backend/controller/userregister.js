@@ -51,26 +51,28 @@ export const login = async (req, res, next) => {
     const isPasswordValid = await existencuser.comparePassword(password);
     if (!isPasswordValid) throw new ApiError(400, "Invalid credentials");
 
-    
+    // Generate tokens
     const accessToken = await existencuser.generateAccessToken();
     const refreshToken = await existencuser.generateRefreshToken();
 
-   
+    // Set cookie options
+    const isProduction = process.env.NODE_ENV === "production";
+
     const accessTokenOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 1000, 
+      secure: isProduction,        // false for localhost, true for production
+      sameSite: isProduction ? "strict" : "lax", // lax allows cross-origin on localhost
+      maxAge: 60 * 60 * 1000,     // 1 hour
     };
 
     const refreshTokenOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, 
+      secure: isProduction,
+      sameSite: isProduction ? "strict" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     };
 
-    
+    // Send cookies and response
     res
       .cookie("accessToken", accessToken, accessTokenOptions)
       .cookie("refreshToken", refreshToken, refreshTokenOptions)
@@ -78,14 +80,13 @@ export const login = async (req, res, next) => {
       .json({
         success: true,
         message: "You are successfully logged in",
-        role:existencuser.role
+        role: existencuser.role,
       });
 
   } catch (err) {
     next(err);
   }
 };
-
 
 export const logout =  async(req,res,next)=>{
    try {

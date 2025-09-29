@@ -1,103 +1,190 @@
-import React, { useState } from "react";
-
-const initialItems = [
-  { id: 1, name: "Margherita Pizza", price: 10, category: "Pizza", available: true },
-  { id: 2, name: "Veg Burger", price: 8, category: "Burger", available: true },
-  { id: 3, name: "Caesar Salad", price: 6, category: "Salad", available: true },
-];
+import React, { useState, useEffect } from "react";
+import { getcategories, getfooditems, addfooditem, deletefood, updatefooditem } from "../../api/productapi";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export default function Items() {
-  const [items, setItems] = useState(initialItems);
-  const [form, setForm] = useState({ id: null, name: "", price: "", category: "", available: true });
-  const [isEditing, setIsEditing] = useState(false);
+  const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  // Handle form change
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      id: null,
+      description: "",
+      name: "",
+      price: "",
+      category: "",
+      available: true,
+      image: null,
+    },
+  });
+
+  const watchId = watch("id"); // watch if editing
+
+  // Fetch categories
+  const getCategory = async () => {
+    try {
+      const result = await getcategories();
+      setCategories(result.data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
   };
 
-  // Add item
-  const handleAdd = () => {
-    if (!form.name || !form.price || !form.category) return alert("Fill all fields");
-    const newItem = { ...form, id: Date.now(), price: Number(form.price) };
-    setItems([...items, newItem]);
-    setForm({ id: null, name: "", price: "", category: "", available: true });
+  // Fetch food items
+  const fetchFoodItems = async () => {
+    try {
+      const result = await getfooditems();
+      setItems(result.data);
+    } catch (error) {
+      console.error("Error fetching food items:", error);
+    }
   };
 
-  // Edit item
+  useEffect(() => {
+    fetchFoodItems();
+    getCategory();
+  }, []);
+
+  // Submit form (Add or Edit)
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("price", data.price);
+      formData.append("category", data.category);
+      formData.append("availability", data.available);
+      if (data.image && data.image[0]) {
+        formData.append("image", data.image[0]);
+      }
+
+      if (data.id) {
+        // Edit item
+        await updatefooditem(data.id, formData);
+        toast.success("Item updated successfully");
+      } else {
+        // Add new item
+        await addfooditem(formData);
+        toast.success("Item added successfully");
+      }
+
+      reset();
+      fetchFoodItems();
+    } catch (err) {
+      console.error("Error:", err);
+      toast.error("Failed to save item");
+    }
+  };
+
+  // Handle Edit (populate form)
   const handleEdit = (item) => {
-    setIsEditing(true);
-    setForm(item);
+    setValue("id", item._id);
+    setValue("description", item.description);
+    setValue("name", item.name);
+    setValue("price", item.price);
+    setValue("category", item.category);
+    setValue("available", item.availability);
   };
 
-  // Update item
-  const handleUpdate = () => {
-    setItems(items.map((i) => (i.id === form.id ? { ...form, price: Number(form.price) } : i)));
-    setIsEditing(false);
-    setForm({ id: null, name: "", price: "", category: "", available: true });
-  };
-
-  // Delete item
-  const handleDelete = (id) => {
-    setItems(items.filter((i) => i.id !== id));
+  // Handle Delete
+  const handleDelete = async (id) => {
+    try {
+      await deletefood(id);
+      toast.success("Item deleted successfully");
+      setItems((prevItems) => prevItems.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Error deleting item:", err);
+      toast.error("Failed to delete item");
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-orange-400">Manage Items</h1>
+    <div className="p-4 md:p-6 space-y-6">
+      <h1 className="text-2xl md:text-3xl font-bold text-orange-400 text-center md:text-left">
+        Manage Items
+      </h1>
 
       {/* Form */}
-      <div className="bg-gray-900 p-4 rounded-lg shadow space-y-2">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-gray-900 p-4 md:p-6 rounded-lg shadow space-y-4 max-w-6xl mx-auto"
+        encType="multipart/form-data"
+      >
         <input
           type="text"
-          name="name"
           placeholder="Item Name"
-          value={form.name}
-          onChange={handleChange}
+          {...register("name", { required: "Name is required" })}
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
+        {errors.name && <p className="text-red-400 text-sm">{errors.name.message}</p>}
+
+        <textarea
+          placeholder="Description"
+          {...register("description", { required: "Description is required" })}
+          className="w-full p-2 rounded bg-gray-800 text-white"
+        />
+        {errors.description && <p className="text-red-400 text-sm">{errors.description.message}</p>}
+
         <input
           type="number"
-          name="price"
           placeholder="Price"
-          value={form.price}
-          onChange={handleChange}
+          {...register("price", { required: "Price is required" })}
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
+        {errors.price && <p className="text-red-400 text-sm">{errors.price.message}</p>}
+
+        <select
+          {...register("category", { required: "Category is required" })}
+          className="w-full p-2 rounded bg-gray-800 text-white"
+        >
+          <option value="">-- Select Category --</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.title}
+            </option>
+          ))}
+        </select>
+        {errors.category && <p className="text-red-400 text-sm">{errors.category.message}</p>}
+
         <input
-          type="text"
-          name="category"
-          placeholder="Category"
-          value={form.category}
-          onChange={handleChange}
+          type="file"
+          accept="image/*"
+          {...register("image")}
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
+
         <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="available"
-            checked={form.available}
-            onChange={handleChange}
-          />
+          <input type="checkbox" {...register("available")} />
           <span>Available</span>
         </label>
-        {isEditing ? (
-          <button onClick={handleUpdate} className="bg-orange-400 px-4 py-2 rounded text-black">
-            Update Item
-          </button>
-        ) : (
-          <button onClick={handleAdd} className="bg-green-500 px-4 py-2 rounded text-black">
-            Add Item
-          </button>
-        )}
-      </div>
+
+        {/* Add/Edit Item Button */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={`w-full md:w-auto bg-green-500 px-4 py-2 rounded text-black font-semibold ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {isSubmitting ? (watchId ? "Updating..." : "Adding...") : watchId ? "Update Item" : "Add Item"}
+        </button>
+      </form>
 
       {/* Items Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full text-left border border-gray-700">
           <thead>
             <tr className="bg-gray-800 text-gray-400">
+              <th className="p-3">Id</th>
               <th className="p-3">Name</th>
               <th className="p-3">Price</th>
               <th className="p-3">Category</th>
@@ -107,21 +194,25 @@ export default function Items() {
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.id} className="border-b border-gray-700 hover:bg-gray-800 transition">
+              <tr
+                key={item._id}
+                className="border-b border-gray-700 hover:bg-gray-800 transition"
+              >
+                <td className="p-3">{item._id}</td>
                 <td className="p-3">{item.name}</td>
-                <td className="p-3">${item.price}</td>
-                <td className="p-3">{item.category}</td>
-                <td className="p-3">{item.available ? "Yes" : "No"}</td>
-                <td className="p-3 space-x-2">
+                <td className="p-3">₹{item.price}</td>
+                <td className="p-3">{item.category?.title}</td>
+                <td className="p-3">{item.availability ? "Yes" : "No"}</td>
+                <td className="p-3 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleEdit(item)}
-                    className="bg-yellow-500 px-2 py-1 rounded text-black"
+                    className="bg-yellow-500 cursor-pointer px-2 py-1 rounded text-black"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(item.id)}
-                    className="bg-red-500 px-2 py-1 rounded text-black"
+                    onClick={() => handleDelete(item._id)}
+                    className="bg-red-500 cursor-pointer px-2 py-1 rounded text-black"
                   >
                     Delete
                   </button>
@@ -130,7 +221,7 @@ export default function Items() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td colSpan={5} className="p-3 text-center text-gray-400">
+                <td colSpan={6} className="p-3 text-center text-gray-400">
                   No items found
                 </td>
               </tr>

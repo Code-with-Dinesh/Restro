@@ -14,3 +14,18 @@ export const singleprodctapi = async(id)=>{
    const res =  await axiosInstance.get(`/singlefood/${id}`)
    return res.data;
 }
+
+export const addfooditem = async(userdata)=>{
+    const res = await axiosInstance.post("/additem",userdata)
+    return res.data;
+}
+
+export const deletefood = async(id)=>{
+    const res = await axiosInstance.delete(`/fooditem/${id}`)
+    return res.data;
+}
+
+export const updatefooditem = async(id,userdata)=>{
+    const res = await axiosInstance.put(`/updteitem/${id}`,userdata)
+    return res.data;
+}
