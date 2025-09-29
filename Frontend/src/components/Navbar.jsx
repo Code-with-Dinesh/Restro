@@ -7,16 +7,22 @@ import toast from "react-hot-toast";
 export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const  isAuthenticated = useAuthStore((state)=>state.isAuthenticated)
-  const clearUser = useAuthStore((state)=>state.clearUser)
-  
+  const { role } = useAuthStore();
+  console.log(role);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const clearUser = useAuthStore((state) => state.clearUser);
+
   const removHandler = async () => {
     try {
-      const res = await axiosInstance.post("/logout", {}, { withCredentials: true });
+      const res = await axiosInstance.post(
+        "/logout",
+        {},
+        { withCredentials: true }
+      );
       console.log(res.data);
       clearUser();
-       const state = useAuthStore.getState();
-       
+      const state = useAuthStore.getState();
+
       toast.success("Logout Successfully");
       navigate("/login");
     } catch (error) {
@@ -36,8 +42,22 @@ export default function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-6 items-center">
-          <Link to="/" className="hover:text-orange-400">Home</Link>
-         {isAuthenticated ?  <Link to="/user/dashboard" className="hover:text-orange-400">Dashboard</Link>:''}
+          <Link to="/" className="hover:text-orange-400">
+            Home
+          </Link>
+          {isAuthenticated && role ? (
+            role === "admin" ? (
+              <Link to="/admin" className="hover:text-orange-400">
+                Dashboard
+              </Link>
+            ) : (
+              <Link to="/user" className="hover:text-orange-400">
+                Dashboard
+              </Link>
+            )
+          ) : (
+            ""
+          )}
 
           {isAuthenticated ? (
             <button
@@ -96,8 +116,12 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {open && (
         <div className="md:hidden px-4 pt-2 pb-4 space-y-2 bg-gray-800">
-          <Link to="/" className="block hover:text-orange-400">Home</Link>
-          <Link to="/menu" className="block hover:text-orange-400">Menu</Link>
+          <Link to="/" className="block hover:text-orange-400">
+            Home
+          </Link>
+          <Link to="/menu" className="block hover:text-orange-400">
+            Menu
+          </Link>
 
           {isAuthenticated ? (
             <button
