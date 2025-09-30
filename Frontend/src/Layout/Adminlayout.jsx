@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar";
 export default function AdminLayout({ role }) {
     
   return (
-    <div className="flex h-screen bg-gray-800 text-white">
+    <div className="flex min-h-screen bg-gray-800 text-white">
       
       <div className="h-screen sticky top-0">
         <Sidebar role={role} />

@@ -1,24 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { orderapi, updateorderApi } from "../../api/productapi";
+import toast from "react-hot-toast";
 
-// Sample orders data
-const initialOrders = [
-  { id: 1, customer: "John Doe", item: "Margherita Pizza", status: "Pending" },
-  { id: 2, customer: "Jane Smith", item: "Caesar Salad", status: "Preparing" },
-  { id: 3, customer: "Bob Johnson", item: "Grilled Chicken", status: "Delivered" },
-  { id: 4, customer: "Alice Brown", item: "Chocolate Lava Cake", status: "Pending" },
-];
-
-// Possible status options
-const statusOptions = ["Pending", "Confirmed", "Preparing", "Delivered", "Canceled"];
+const statusOptions = ["Pending", "Confirmed", "Delivered", "Canceled"];
 
 export default function Orders() {
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
 
-  // Update order status
-  const handleStatusChange = (id, newStatus) => {
-    setOrders(
-      orders.map((order) => (order.id === id ? { ...order, status: newStatus } : order))
-    );
+  
+  const fetchOrder = async () => {
+    try {
+      const result = await orderapi();
+      setOrders(result.data); 
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrder();
+  }, []);
+
+ 
+  const handleStatusChange = async (id, newStatus) => {
+    console.log(id,newStatus)
+    try {
+      
+      setOrders(
+        orders.map((order) =>
+          order._id === id ? { ...order, status: newStatus } : order
+        )
+      );
+
+      
+      const result = await updateorderApi(id, newStatus);
+      toast.success("Update Status successfully")
+     
+    } catch (error) {
+      console.error("Error updating order status:", error);
+    }
   };
 
   return (
@@ -29,7 +49,7 @@ export default function Orders() {
         <table className="min-w-full text-left border border-gray-700">
           <thead>
             <tr className="bg-gray-800 text-gray-400">
-              <th className="p-3">Customer</th>
+              <th className="p-3">Customer Id</th>
               <th className="p-3">Item</th>
               <th className="p-3">Status</th>
               <th className="p-3">Actions</th>
@@ -38,11 +58,13 @@ export default function Orders() {
           <tbody>
             {orders.map((order) => (
               <tr
-                key={order.id}
+                key={order._id}
                 className="border-b border-gray-700 hover:bg-gray-800 transition"
               >
-                <td className="p-3">{order.customer}</td>
-                <td className="p-3">{order.item}</td>
+                <td className="p-3">{order.user?.name || order.user}</td>
+                <td className="p-3">
+                  {order.items?.map((i) => i.food?.name || i.food).join(", ")}
+                </td>
                 <td
                   className={`p-3 font-semibold ${
                     order.status === "Delivered"
@@ -59,7 +81,9 @@ export default function Orders() {
                 <td className="p-3 space-x-2">
                   <select
                     value={order.status}
-                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusChange(order._id, e.target.value)
+                    }
                     className="bg-gray-800 text-white p-1 rounded"
                   >
                     {statusOptions.map((status) => (

@@ -7,7 +7,7 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import AdminLayout from './Layout/Adminlayout'
 import Dashboard from './pages/Dashboard'
-import Users from './pages/admin/Users'
+
 import Orders from './pages/admin/Orders'
 import Items from './pages/admin/Items'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -19,6 +19,7 @@ import UserDashboard from './pages/user/UserDashboard'
 import Myorder from './pages/user/Myorder'
 import Setting from "./pages/user/Setting"
 import Singleproduct from './pages/Singleproduct'
+import Category from './pages/admin/Category'
 const App = () => {
   const {role,isAuthenticated} = useAuthStore()
   
@@ -29,7 +30,7 @@ const App = () => {
          <Route index element={<Dashboard role={role}/>}/>
          <Route path="orders" element={<Orders/>}/>
          <Route path="restaurant-items" element={<Items/>}/>
-         <Route path="users" element={<Users/>}/>
+         <Route path="category" element={<Category/>}/>
       </Route>)}
       
         

@@ -28,7 +28,7 @@ export default function Login() {
      
    }
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen   flex flex-col md:flex-row bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
       {/* Left Section with Chef Hat SVG */}
       <div className="md:w-1/2 flex items-center justify-center p-8">
         <motion.div

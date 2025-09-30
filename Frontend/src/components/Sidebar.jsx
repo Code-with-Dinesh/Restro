@@ -7,7 +7,7 @@ const Sidebar = ({ role }) => {
   const navigate = useNavigate()
   const adminLinks = [
     { name: "Dashboard", path: "/admin" },
-    { name: "Users", path: "/admin/users" },
+    { name: "Category", path: "/admin/category" },
     { name: "Restaurant Items", path: "/admin/restaurant-items" },
     { name: "Orders", path: "/admin/orders" },
   ];

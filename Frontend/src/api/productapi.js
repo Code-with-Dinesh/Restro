@@ -29,3 +29,14 @@ export const updatefooditem = async(id,userdata)=>{
     const res = await axiosInstance.put(`/updteitem/${id}`,userdata)
     return res.data;
 }
+
+export const orderapi =  async()=>{
+    const res = await  axiosInstance.get('/allorders')
+    return res.data;
+}
+
+export const updateorderApi = async(id,newStatus)=>{
+    console.log('skdjfskfj',id,newStatus)
+    const res = await axiosInstance.put(`/updateorder/${id}`,{status:newStatus})
+    return res.data;
+}
