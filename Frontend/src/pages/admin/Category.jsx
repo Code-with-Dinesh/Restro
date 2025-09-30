@@ -1,32 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getcategories } from "../../api/productapi";
+import { getcategories, addcategoryApi } from "../../api/productapi";
+import toast from "react-hot-toast";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
-
   const [newCategory, setNewCategory] = useState("");
   const [newImageFile, setNewImageFile] = useState(null);
   const [preview, setPreview] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setNewImageFile(file);
-      setPreview(URL.createObjectURL(file)); // preview the image
+      setPreview(URL.createObjectURL(file));
     }
-  };
-
-  const handleAddCategory = () => {
-    if (newCategory.trim() === "" || !newImageFile) return;
-
-    setCategories([
-      ...categories,
-      { _id: Date.now(), title: newCategory.trim(), coverimage: preview },
-    ]);
-
-    setNewCategory("");
-    setNewImageFile(null);
-    setPreview("");
   };
 
   const fetchCategories = async () => {
@@ -35,12 +23,47 @@ const Category = () => {
       setCategories(result.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
+      toast.error("Failed to fetch categories");
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchCategories(); 
   }, []);
+
+  const handleAddCategory = async () => {
+    if (newCategory.trim() === "" || !newImageFile) {
+      toast.error("Please enter category name and select an image");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", newCategory);
+    formData.append("coverimage", newImageFile);
+
+    try {
+      setLoading(true);
+      const result = await addcategoryApi(formData);
+
+      if (result.data && result.data.category) {
+        const newCat = result.data.category;
+
+        // Directly update UI state
+        setCategories(prev => [...prev, newCat]);
+
+        toast.success("Category added successfully");
+      }
+
+      setNewCategory("");
+      setNewImageFile(null);
+      setPreview("");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add category");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -63,9 +86,14 @@ const Category = () => {
         />
         <button
           onClick={handleAddCategory}
-          className="bg-orange-400 text-white px-6 py-3 rounded-lg hover:bg-orange-500 transition"
+          disabled={loading}
+          className={`px-6 py-3 rounded-lg text-white transition ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-orange-400 hover:bg-orange-500"
+          }`}
         >
-          Add Category
+          {loading ? "Adding..." : "Add Category"}
         </button>
       </div>
 
@@ -89,28 +117,37 @@ const Category = () => {
               <th className="p-3">Id</th>
               <th className="p-3">Name</th>
               <th className="p-3">Image</th>
+              <th className="p-3">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {categories.map((cat, index) => (
-              <tr
-                key={cat._id || index}
-                className="border-b border-gray-700 hover:bg-gray-800 transition"
-              >
-                <td className="p-3">{cat._id}</td>
-                <td className="p-3">{cat.title}</td>
-                <td className="p-3">
-                  <img
-                    src={cat.coverimage}
-                    alt={cat.title}
-                    className="w-24 h-24 object-cover rounded-lg"
-                  />
-                </td>
-              </tr>
-            ))}
-            {categories.length === 0 && (
+            {categories.length > 0 ? (
+              categories.map((cat, index) => (
+                <tr
+                  key={cat._id || index}
+                  className="border-b border-gray-700 hover:bg-gray-800 transition"
+                >
+                  <td className="p-3">{cat._id}</td>
+                  <td className="p-3">{cat.title}</td>
+                  <td className="p-3">
+                    <img
+                      src={cat.coverimage}
+                      alt={cat.title}
+                      className="w-24 h-24 object-cover rounded-lg"
+                    />
+                  </td>
+                  <td className="p-3">
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan={3} className="p-3 text-center text-gray-400">
+                <td colSpan={4} className="p-3 text-center text-gray-400">
                   No categories found
                 </td>
               </tr>

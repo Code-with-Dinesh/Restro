@@ -9,7 +9,7 @@ export const allorders = async(req,res,next)=>{
                 path: "items.food", // populate food inside items array
                 model: "FoodItem"
             }); // todo we populate the data 
-        console.log(order)
+        
          res.status(200).json({success:true,message:"Fetch order successfully",data:order})
     } catch (error) {
         next(error)
@@ -20,8 +20,7 @@ export const updatorderstatus = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status } = req.body; 
-    console.log(status)
-
+    
     const validateStatus = ["pending", "confirmed", "delivered", "canceled"];
     if (!validateStatus.includes(status.toLowerCase())) {
       throw new ApiError(400, "Invalid status value");

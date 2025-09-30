@@ -36,7 +36,11 @@ export const orderapi =  async()=>{
 }
 
 export const updateorderApi = async(id,newStatus)=>{
-    console.log('skdjfskfj',id,newStatus)
     const res = await axiosInstance.put(`/updateorder/${id}`,{status:newStatus})
+    return res.data;
+}
+
+export const addcategoryApi = async(userdata)=>{
+    const res = await axiosInstance.post('/addcategory',userdata)
     return res.data;
 }
