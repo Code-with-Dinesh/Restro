@@ -44,3 +44,8 @@ export const addcategoryApi = async(userdata)=>{
     const res = await axiosInstance.post('/addcategory',userdata)
     return res.data;
 }
+
+export const deletcatrogyapi = async(id)=>{
+    const res = await axiosInstance.delete(`/deletecategory/${id}`)
+    return res.data;
+}

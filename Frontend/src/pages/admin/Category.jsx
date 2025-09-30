@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getcategories, addcategoryApi } from "../../api/productapi";
+import { getcategories, addcategoryApi ,deletcatrogyapi} from "../../api/productapi";
 import toast from "react-hot-toast";
 
 const Category = () => {
@@ -47,13 +47,9 @@ const Category = () => {
 
       if (result.data && result.data.category) {
         const newCat = result.data.category;
-
-        // Directly update UI state
         setCategories(prev => [...prev, newCat]);
-
         toast.success("Category added successfully");
       }
-
       setNewCategory("");
       setNewImageFile(null);
       setPreview("");
@@ -64,6 +60,21 @@ const Category = () => {
       setLoading(false);
     }
   };
+
+  const handledeltecatrogy = async (id) => {
+  if (!id) return toast.error("Invalid category id");
+
+  try {
+    setLoading(true)
+    await deletcatrogyapi(id);
+    setCategories(prev => prev.filter(cat => cat._id !== id)); // remove from UI
+    toast.success("Category removed successfully");
+    setLoading(false)
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to delete category");
+  }
+};
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -138,9 +149,10 @@ const Category = () => {
                   </td>
                   <td className="p-3">
                     <button
+                    onClick={()=>handledeltecatrogy(cat._id)}
                       className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
                     >
-                      Delete
+                      {loading ? "Delete..." : "Delete"}
                     </button>
                   </td>
                 </tr>
