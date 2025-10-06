@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
-import { singleprodctapi } from "../api/productapi.js";
+import { singleprodctapi,addcartApi } from "../api/productapi.js";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Singleproduct = () => {
   const { id } = useParams(); 
@@ -23,6 +24,15 @@ const Singleproduct = () => {
 
     fetchSingleProduct();
   }, [id]);
+
+  const cartHandler = async(foodId,quantity)=>{
+    console.log(foodId,quantity)
+     const result = await addcartApi(foodId,quantity)
+    
+      toast.success('Item added to cart')
+     
+     console.log("add cart api data",result)
+  }
 
   if (loading) {
     return (
@@ -108,9 +118,10 @@ const Singleproduct = () => {
           </p>
 
          
-          <button className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition">
+          <button onClick={()=>cartHandler(food._id,quantity)} className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition">
             Add to Cart
           </button>
+         
         </div>
       </div>
     </div>

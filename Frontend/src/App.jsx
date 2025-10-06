@@ -10,9 +10,10 @@ import Dashboard from './pages/Dashboard'
 
 import Orders from './pages/admin/Orders'
 import Items from './pages/admin/Items'
-import ProtectedRoute from './components/ProtectedRoute'
+
 import  { Toaster } from 'react-hot-toast';
 import PublicRoute from './components/PublicRoute'
+import ProtectedRoute from './components/ProtectedRoute'
 import useAuthStore from './store/authstore'
 import Pagenotfound from './pages/Pagenotfound'
 import UserDashboard from './pages/user/UserDashboard'
@@ -49,7 +50,7 @@ const App = () => {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />  
         <Route path="menu" element={<Menu />} />  
-         <Route path="/fooditem/:id" element={<Singleproduct/>} />  
+         <Route path="fooditem/:id" element={<ProtectedRoute> <Singleproduct/></ProtectedRoute>} />  
       </Route>
 
       <Route path='*' element={<Pagenotfound/>}/>

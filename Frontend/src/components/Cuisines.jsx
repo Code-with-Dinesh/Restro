@@ -8,7 +8,7 @@ export default function Cuisines() {
  
   
   const {setCategories,categories} = useCategorystore()
-  console.log(setCategories,categories)
+  
   const fetchcategores = async()=>{
     const result = await getcategories()
     setCategories(result.data)

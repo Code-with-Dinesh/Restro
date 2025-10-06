@@ -79,7 +79,7 @@ export default function Login() {
                 placeholder="Enter your email"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
-              {errors.email && <p className="text-red-500">{errors.name.message}</p>}
+              {errors?.email && <p className="text-red-500">{errors?.name?.message}</p>}
             </div>
 
             {/* Password */}
@@ -91,7 +91,7 @@ export default function Login() {
                 placeholder="Enter your password"
                 className="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none"
               />
-                  {errors.email && <p className="text-red-500">{errors.name.message}</p>}
+                  {errors?.password && <p className="text-red-500">{errors?.name?.message}</p>}
 
             </div>
 

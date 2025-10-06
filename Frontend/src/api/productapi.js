@@ -49,3 +49,9 @@ export const deletcatrogyapi = async(id)=>{
     const res = await axiosInstance.delete(`/deletecategory/${id}`)
     return res.data;
 }
+
+export const addcartApi = async(foodId,quantity)=>{
+    
+    const res = await axiosInstance.post("/addcart",{foodId,quantity})
+    return res.data;
+}
