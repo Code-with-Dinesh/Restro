@@ -51,7 +51,16 @@ export const deletcatrogyapi = async(id)=>{
 }
 
 export const addcartApi = async(foodId,quantity)=>{
-    
     const res = await axiosInstance.post("/addcart",{foodId,quantity})
+    return res.data;
+}
+
+export const getcartapi = async()=>{
+    const res = await axiosInstance.get('/getcart')
+    return res.data;
+}
+
+export const removecartApi = async(id)=>{
+    const res = await axiosInstance.delete(`/removecart/${id}`)
     return res.data;
 }

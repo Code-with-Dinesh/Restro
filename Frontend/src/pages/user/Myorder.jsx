@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-
+import { getcartapi,removecartApi } from "../../api/productapi";
+import toast from 'react-hot-toast'
 const MyOrder = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -8,32 +9,9 @@ const MyOrder = () => {
     const fetchCart = async () => {
       setLoading(true);
       try {
-        setCartItems([
-          {
-            _id: "1",
-            name: "Margherita Pizza",
-            image: "https://via.placeholder.com/150",
-            option: "Full",
-            price: 250,
-            quantity: 2,
-          },
-          {
-            _id: "2",
-            name: "Veg Burger",
-            image: "https://via.placeholder.com/150",
-            option: "Single",
-            price: 150,
-            quantity: 1,
-          },
-          {
-            _id: "3",
-            name: "Chocolate Cake",
-            image: "https://via.placeholder.com/150",
-            option: "Half",
-            price: 200,
-            quantity: 3,
-          },
-        ]);
+        const result = await getcartapi();
+        setCartItems(result.data.cart);
+        
       } catch (error) {
         console.log("Error fetching cart items:", error);
       } finally {
@@ -44,16 +22,29 @@ const MyOrder = () => {
     fetchCart();
   }, []);
 
-  const removeItem = (id) => setCartItems((prev) => prev.filter((item) => item._id !== id));
-  const clearCart = () => setCartItems([]);
+
+  const removeItem = async(id)=>{
+    try {
+       const result = await removecartApi(id)
+       console.log(result)
+       setCartItems((prev)=>prev.filter((elem)=>elem._id != id))
+       toast.success('Item remove successfully')
+    } catch (error) {
+      console.log('error while remove cart',error)
+    }
+  }
+
+ 
   const handleCheckout = () => alert("Proceeding to payment...");
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+  
+  const totalPrice = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
 
   if (loading) return <p className="text-white text-center mt-12">Loading Cart...</p>;
 
   return (
-    <div className="bg-gray-900 min-h-screen p-6 md:p-12 text-white">
-      <h1 className="text-4xl md:text-5xl font-bold mb-10 text-orange-400 text-center md:text-left">
+    <div className="bg-gray-900 min-h-screen px-4 sm:px-6 md:px-12 py-8 text-white">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-10 text-orange-400 text-center md:text-left">
         Your Cart
       </h1>
 
@@ -65,21 +56,23 @@ const MyOrder = () => {
             {cartItems.map((item) => (
               <div
                 key={item._id}
-                className="flex flex-col md:flex-row items-center md:items-start justify-between p-4 bg-gray-800 rounded-xl shadow-lg gap-4"
+                className="flex flex-col md:flex-row items-center md:items-start justify-between p-4 sm:p-6 bg-gray-800 rounded-2xl shadow-lg gap-4 hover:scale-[1.02] transition-transform"
               >
                 <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-lg"
+                  src={item.food.image}
+                  alt={item.food.name}
+                  className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-xl"
                 />
-                <div className="flex-1 md:ml-6">
-                  <h2 className="text-2xl md:text-3xl font-semibold text-white">{item.name}</h2>
-                  <p className="text-gray-300 mt-1">Option: {item.option}</p>
-                  <p className="text-green-400 font-bold text-xl md:text-2xl mt-2">₹{item.price}</p>
+
+                <div className="flex-1 md:ml-6 text-center md:text-left">
+                  <h2 className="text-xl sm:text-2xl font-semibold text-white">{item.food.name}</h2>
+                  <p className="text-gray-300 mt-1">Option: {item.options}</p>
                   <p className="text-gray-300 mt-1">Quantity: {item.quantity}</p>
+                  <p className="text-green-400 font-bold text-xl sm:text-2xl mt-2">₹{item.totalPrice}</p>
                 </div>
+
                 <button
-                  className="mt-4 md:mt-0 px-5 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-red-600 text-sm sm:text-base rounded-lg hover:bg-red-700 transition-colors"
                   onClick={() => removeItem(item._id)}
                 >
                   Remove
@@ -88,21 +81,19 @@ const MyOrder = () => {
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col md:flex-row items-center justify-between p-6 bg-gray-800 rounded-xl shadow-lg gap-4">
-            <p className="text-2xl md:text-3xl font-bold text-white">Total: ₹{totalPrice}</p>
-            <div className="flex flex-col sm:flex-row gap-4">
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 bg-gray-800 rounded-2xl shadow-lg gap-4">
+            <p className="text-xl sm:text-2xl font-bold text-white text-center sm:text-left">
+              Total: <span className="text-green-400">₹{totalPrice}</span>
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <button
-                className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-sm sm:text-base rounded-lg hover:bg-blue-700 transition-colors"
                 onClick={handleCheckout}
               >
                 Checkout
               </button>
-              <button
-                className="px-6 py-3 bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                onClick={clearCart}
-              >
-                Clear Cart
-              </button>
+             
             </div>
           </div>
         </>
