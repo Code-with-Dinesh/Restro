@@ -64,3 +64,8 @@ export const removecartApi = async(id)=>{
     const res = await axiosInstance.delete(`/removecart/${id}`)
     return res.data;
 }
+
+export const userApi = async()=>{
+   const res = await axiosInstance.get('/profile')
+   return res.data;
+}

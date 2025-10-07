@@ -2,9 +2,10 @@ import express from 'express';
 import { login, logout, register } from '../controller/userregister.js';
 import { addcategory, additem, deletecategory, deleteitem, getcategory, getfooditem, singlefooditem, updateitem } from '../controller/fooditems.js';
 import upload from '../middleware.js/multer.js';
-import { authmiddleware } from '../middleware.js/auth.js';
+import { authmiddleware,authroizeRole } from '../middleware.js/auth.js';
 import { allorders, updatorderstatus } from '../controller/orderadmin.js';
-import { addcart, getcart, removecart } from '../controller/usercart.js';
+import { addcart, getcart, removecart, userprofile } from '../controller/usercart.js';
+
 const router = express.Router();
 
 router.post('/register', register);
@@ -23,7 +24,9 @@ router.get("/allorders",allorders)
 router.put("/updateorder/:id",updatorderstatus)
 
 // cart api 
-router.post('/addcart',authmiddleware,addcart)
-router.get("/getcart",authmiddleware,getcart)
-router.delete("/removecart/:cartItemId",authmiddleware,removecart)
+router.post('/addcart',authmiddleware,authroizeRole(["user"]),addcart)
+router.get("/getcart",authmiddleware,authroizeRole(["user"]),getcart)
+router.delete("/removecart/:cartItemId",authmiddleware,authroizeRole(["user"]),removecart)
+
+router.get('/profile',authmiddleware,userprofile)
 export default router;

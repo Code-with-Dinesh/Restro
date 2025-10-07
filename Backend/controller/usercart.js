@@ -3,7 +3,6 @@ import User from "../models/user.model.js";
 import FoodItem from "../models/fooditem.model.js";
 
 
-
 export const getcart = async(req,res,next)=>{
   try {
       const userId = req.user._id;
@@ -16,61 +15,6 @@ export const getcart = async(req,res,next)=>{
     next(error)
   }
 }
-
-// export const addcart = async (req, res, next) => {
-//   try {
-//     const { foodId, quantity } = req.body; 
-//     console.log("Food ID:", foodId, "Quantity:", quantity);
-
-//     const userId = req.user;
-
-//     // Validate input
-//     if (!foodId || !quantity) {
-//       throw new ApiError(400, "All fields are required");
-//     }
-
-//     // Find the user
-//     const user = await User.findById(userId).populate("cart.food");
-//     if (!user) throw new ApiError(404, "User not found");
-
-//     // Find the food item
-//     const food = await FoodItem.findById(foodId);
-//     if (!food) throw new ApiError(404, "Food item does not exist");
-
-//     // Use the main price of the food
-//     const itemPrice = food.price;
-//     if (typeof itemPrice !== "number") {
-//       throw new ApiError(400, "Price not available for this item");
-//     }
-
-//     // Check if item already exists in cart
-//     const existingItemIndex = user.cart.findIndex(
-//       (item) => item.food._id.toString() === foodId
-//     );
-
-//     if (existingItemIndex > -1) {
-//       // Update existing item
-//       const existingItem = user.cart[existingItemIndex];
-//       existingItem.quantity += Number(quantity);
-//       existingItem.totalPrice = itemPrice * existingItem.quantity;
-//     } else {
-//       // Add new item
-//       user.cart.push({
-//         food: foodId,
-//         quantity,
-//         totalPrice: itemPrice * quantity
-//       });
-//     }
-
-//     // Save user cart
-//     await user.save();
-
-//     res.status(200).json(user.cart);
-
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 export const removecart = async(req,res,next)=>{
   try {
@@ -105,8 +49,6 @@ export const removecart = async(req,res,next)=>{
  
 
 }
-
-
 
 export const addcart = async (req, res, next) => {
   try {
@@ -166,3 +108,17 @@ export const addcart = async (req, res, next) => {
     next(error);
   }
 };
+
+export const userprofile = async(req,res)=>{
+  try {
+     const user = await User.findById(req.user.id).select("-password")
+     if(!user){
+       throw new ApiError(404,"User not found")
+     }
+     else{
+      res.status(200).json({success:true,message:"User data fetch successfully",data:user})
+     }
+  } catch (error) {
+    console.log('Error while fetching the user info',error)
+  }
+}

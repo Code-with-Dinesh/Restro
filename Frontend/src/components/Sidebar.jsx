@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 
 const Sidebar = ({ role }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate()
+  const location = useLocation(); // listen to route changes
+
   const adminLinks = [
     { name: "Dashboard", path: "/admin" },
     { name: "Category", path: "/admin/category" },
@@ -20,13 +21,16 @@ const Sidebar = ({ role }) => {
 
   const links = role === "admin" ? adminLinks : userLinks;
 
-  
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
-      {/* Hamburger Button for Mobile */}
-      <div className="md:hidden flex items-center justify-between bg-gray-900 p-4">
-        <div className="text-2xl font-bold text-orange-400">
+      {/* Mobile Hamburger Header */}
+      <div className="md:hidden flex items-center justify-between bg-gray-800 p-4 shadow-md">
+        <div className="text-2xl font-bold text-orange-400 truncate">
           {role === "admin" ? "Admin Panel" : "User Panel"}
         </div>
         <button
@@ -39,21 +43,23 @@ const Sidebar = ({ role }) => {
 
       {/* Sidebar */}
       <aside
-        className={`bg-gray-900 text-white min-h-screen flex flex-col fixed md:relative top-0 left-0 z-50 w-64 transform transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`bg-gray-900 text-white fixed md:relative top-0 left-0 z-50 w-64 min-h-screen flex flex-col transform transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        `}
       >
+        {/* Sidebar Header */}
         <div className="p-6 text-2xl font-bold text-orange-400 hidden md:block">
           {role === "admin" ? "Admin Panel" : "User Panel"}
         </div>
-        <nav className="flex-1 mt-4 md:mt-0">
+
+        {/* Navigation */}
+        <nav className="flex-1 mt-4 md:mt-0 overflow-y-auto">
           {links.map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
-              onClick={() => setIsOpen(false)} // close sidebar on mobile click
               className={({ isActive }) =>
-                `block px-6 py-3 hover:bg-gray-800 ${
+                `block px-6 py-3 md:px-4 md:py-2 hover:bg-gray-800 transition-colors duration-200 rounded-md mx-2 my-1 ${
                   isActive ? "bg-gray-800 text-orange-400 font-semibold" : ""
                 }`
               }
@@ -61,17 +67,18 @@ const Sidebar = ({ role }) => {
               {link.name}
             </NavLink>
           ))}
-         <Link
-  to="/"
-  className="mt-4 mx-4 block w-full md:inline-block md:w-auto text-center bg-gray-900 hover:border-1 hover:border-white text-white font-medium rounded-lg px-6 py-2 transition-all duration-200 shadow-md hover:shadow-lg"
->
-  Go Back
-</Link>
 
+          {/* Go Back Button */}
+          <Link
+            to="/"
+            className="mt-6 mx-4 block w-[calc(100%-2rem)] md:w-auto text-center bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg px-4 py-2 transition-all duration-200 shadow-md hover:shadow-lg"
+          >
+            Go Back
+          </Link>
         </nav>
       </aside>
 
-      {/* Overlay for mobile when sidebar is open */}
+      {/* Overlay for Mobile */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}

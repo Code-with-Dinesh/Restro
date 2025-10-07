@@ -22,3 +22,20 @@ export const authmiddleware = async(req,res,next)=>{
       next(error)
    }
 }
+
+export const authroizeRole = (allowedroles)=>{
+    try {
+        return (req,res,next)=>{
+            const user = req.user;
+            if(!user){
+                return res.status(401).json({success:false,message:"Unauthorize"})
+            }
+            if(!allowedroles.includes(user.role)){
+                return res.status(403).json({success:false,message:"Access Deniad"})
+            }
+            next()
+        }
+    } catch (error) {
+        console.log('error in authrole',error)
+    }
+}

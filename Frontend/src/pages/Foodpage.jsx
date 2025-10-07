@@ -12,6 +12,7 @@ const Foodpage = () => {
         const result = await getfooditems();
         setfooditem(result.data);
       } catch (error) {
+        
         console.log("Error while fetching the product data", error);
       } finally {
         setLoading(false);

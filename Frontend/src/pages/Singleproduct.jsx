@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { singleprodctapi,addcartApi } from "../api/productapi.js";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -9,6 +9,7 @@ const Singleproduct = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState("full");
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate()
   useEffect(() => {
     const fetchSingleProduct = async () => {
       try {
@@ -26,12 +27,19 @@ const Singleproduct = () => {
   }, [id]);
 
   const cartHandler = async(foodId,quantity)=>{
-    console.log(foodId,quantity)
-     const result = await addcartApi(foodId,quantity)
-    
+    try {
+      console.log(foodId,quantity)
+      const result = await addcartApi(foodId,quantity)
       toast.success('Item added to cart')
-     
-     console.log("add cart api data",result)
+      navigate("/user/orders")
+    } catch (error) {
+      if(error.response.status === 403){
+        toast.error(" Admins cannot add items to cart");
+      }
+      else{
+        toast.error(error?.message)
+      }
+    }
   }
 
   if (loading) {
@@ -118,7 +126,7 @@ const Singleproduct = () => {
           </p>
 
          
-          <button onClick={()=>cartHandler(food._id,quantity)} className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition">
+          <button onClick={()=>cartHandler(food._id,quantity)} className="w-full cursor-pointer md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg hover:from-blue-700 hover:to-blue-900 transition">
             Add to Cart
           </button>
          
