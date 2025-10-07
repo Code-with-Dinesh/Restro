@@ -62,7 +62,7 @@ const MyOrder = () => {
                   className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-xl flex-shrink-0"
                 />
 
-                {/* Info + Button wrapper */}
+              
                 <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full text-center sm:text-left">
                   <div className="flex-1 flex flex-col gap-1">
                     <h2 className="text-lg sm:text-2xl font-semibold text-white">{item.food.name}</h2>
@@ -71,7 +71,7 @@ const MyOrder = () => {
                     <p className="text-green-400 font-bold text-lg sm:text-2xl mt-2">₹{item.totalPrice}</p>
                   </div>
 
-                  {/* Remove button */}
+                  
                   <div className="flex-shrink-0 w-full sm:w-auto mt-3 sm:mt-0 flex justify-center sm:justify-end">
                     <button
                       className="flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-red-600 text-sm sm:text-base rounded-lg hover:bg-red-700 transition-colors w-full sm:w-auto"
@@ -85,7 +85,7 @@ const MyOrder = () => {
             ))}
           </div>
 
-          {/* Total and Checkout */}
+          
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-between p-4 sm:p-6 bg-gray-800 rounded-2xl shadow-lg gap-4">
             <p className="text-xl sm:text-2xl font-bold text-white text-center sm:text-left">
               Total: <span className="text-green-400">₹{totalPrice}</span>
