@@ -5,7 +5,7 @@ import upload from '../middleware.js/multer.js';
 import { authmiddleware,authroizeRole } from '../middleware.js/auth.js';
 import { allorders, updatorderstatus } from '../controller/orderadmin.js';
 import { addcart, getcart, removecart, userprofile } from '../controller/usercart.js';
-import { createorder } from '../controller/payment_controller.js';
+import { createorder, verifypayment } from '../controller/payment_controller.js';
 const router = express.Router();
 
 router.post('/register', register);
@@ -32,4 +32,5 @@ router.get('/profile',authmiddleware,userprofile)
 
 //  payment routes
 router.post('/createorder',authmiddleware,createorder)
+router.post('/verify-payment',authmiddleware,verifypayment)
 export default router;
