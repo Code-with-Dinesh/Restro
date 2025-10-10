@@ -15,7 +15,7 @@ const paymentSchema = mongoose.Schema({
     },
     razorpay_paymentId:{
         type:String,
-        required:true
+        // required:true
     },
     razorpay_signature: {
     type: String,
