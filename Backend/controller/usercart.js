@@ -50,6 +50,21 @@ export const removecart = async(req,res,next)=>{
 
 }
 
+export const clearCart = async(req,res,next)=>{
+  try {
+     const userId = req.body;
+     const user = await User.findById(userId)
+     if(!user){
+      throw new ApiError(400,"User is not found")
+     }
+      user.cart = []
+      user.save()
+      res.status(200).json({success:true,message:'Clear cart successfully'})
+  } catch (error) {
+    next(err)
+  }
+}
+
 export const addcart = async (req, res, next) => {
   try {
     const { foodId, quantity } = req.body; 
