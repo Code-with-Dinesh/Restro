@@ -56,7 +56,6 @@ export const verifypayment = async (req, res) => {
         .json({ success: false, message: "Missing required Razorpay fields" });
     }
     const body = razorpay_order_id + "|" + razorpay_payment_id;
-    console.log("this is my body", body);
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECREAT)
       .update(body.toString())
@@ -68,7 +67,7 @@ export const verifypayment = async (req, res) => {
         razorpay_signature,
         status: "paid",
       });
-      console.log("paymentmodel", paymentverify);
+      
       return res
         .status(200)
         .json({ success: true, message: "Pyment verify successfully" });
