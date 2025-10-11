@@ -3,7 +3,7 @@ import { login, logout, register } from '../controller/userregister.js';
 import { addcategory, additem, deletecategory, deleteitem, getcategory, getfooditem, singlefooditem, updateitem } from '../controller/fooditems.js';
 import upload from '../middleware.js/multer.js';
 import { authmiddleware,authroizeRole } from '../middleware.js/auth.js';
-import { allorders, updatorderstatus } from '../controller/orderadmin.js';
+import { allorders, updatorderstatus,fetchpaymentstatus } from '../controller/orderadmin.js';
 import { addcart, getcart, removecart, userprofile, clearCart } from '../controller/usercart.js';
 import { createorder, verifypayment } from '../controller/payment_controller.js';
 const router = express.Router();
@@ -34,4 +34,5 @@ router.get('/profile',authmiddleware,userprofile)
 //  payment routes
 router.post('/createorder',authmiddleware,createorder)
 router.post('/verify-payment',authmiddleware,verifypayment)
+router.get('/fetchorderstatus',authmiddleware,authroizeRole(["admin"]),fetchpaymentstatus)
 export default router;

@@ -1,7 +1,7 @@
 
 import orderModel from "../models/order.model.js";
 import ApiError from "../utils/ApiError.js";
-
+import paymentmodel from '../models/payment.model.js'
 export const allorders = async(req,res,next)=>{
     try {
         const order = await orderModel.find()  // populate user info
@@ -40,3 +40,14 @@ export const updatorderstatus = async (req, res, next) => {
   }
 };
 
+// fetch payment api
+export const fetchpaymentstatus = async(req,res,next)=>{
+   try {
+     const paymentdata = await paymentmodel.find().populate("userId", "name email").sort({ createdAt: -1 })
+     console.log(paymentdata)
+    res.status(200).json({success:true,message:'Fetch order successfully',data:paymentdata})
+   } catch (error) {
+     next(error)
+   }
+ 
+}
