@@ -52,7 +52,7 @@ export const removecart = async(req,res,next)=>{
 
 export const clearCart = async(req,res,next)=>{
   try {
-     const userId = req.body;
+     const userId = req.user._id;
      const user = await User.findById(userId)
      if(!user){
       throw new ApiError(400,"User is not found")

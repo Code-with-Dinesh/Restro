@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getcartapi, removecartApi,createorderApi, verifypaymentApi } from "../../api/productapi";
+import { getcartapi,clearcartApi, removecartApi,createorderApi, verifypaymentApi } from "../../api/productapi";
 import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 
@@ -84,6 +84,10 @@ const handleCheckout = async () => {
 
           if (verify?.success) {
             toast.success("Payment successful!");
+            const data =  await clearcartApi()
+            console.log(data)
+            setCartItems([])
+
           } else {
             toast.error("Payment verification failed!");
           }

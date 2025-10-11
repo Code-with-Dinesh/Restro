@@ -55,6 +55,11 @@ export const addcartApi = async(foodId,quantity)=>{
     return res.data;
 }
 
+export const clearcartApi = async()=>{
+    const res = await axiosInstance.post("/clearcart")
+    return res.data;
+}
+
 export const getcartapi = async()=>{
     const res = await axiosInstance.get('/getcart')
     return res.data;
