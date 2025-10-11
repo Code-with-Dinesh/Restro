@@ -69,3 +69,13 @@ export const userApi = async()=>{
    const res = await axiosInstance.get('/profile')
    return res.data;
 }
+
+// razorypay paymet api
+export const createorderApi = async(data)=>{
+    const res = await axiosInstance.post(`/createorder`,data)
+    return res.data;
+}
+export const verifypaymentApi = async(data)=>{
+    const res =  await axiosInstance.post('/verify-payment',data)
+    return res.data;
+}

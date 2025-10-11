@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { getcartapi, removecartApi } from "../../api/productapi";
+import { getcartapi, removecartApi,createorderApi, verifypaymentApi } from "../../api/productapi";
 import toast from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 
 const MyOrder = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+
+
+   useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -32,8 +45,77 @@ const MyOrder = () => {
       toast.error("Failed to remove item");
     }
   };
+const handleCheckout = async () => {
+  try {
+    if (cartItems.length === 0) {
+      toast.error("Cart is empty");
+      return;
+    }
 
-  const handleCheckout = () => alert("Proceeding to payment...");
+    // 1️⃣ Create Order on backend
+    const result = await createorderApi({
+      amount: totalPrice * 100, // Razorpay needs amount in paise
+      orderId: "ORDER_" + new Date().getTime(),
+    });
+
+    // Ensure order created successfully
+    if (!result?.orderId) {
+      toast.error("Failed to create order");
+      return;
+    }
+
+    // 2️⃣ Setup Razorpay options
+    const options = {
+      key: result.key, // from backend (Razorpay test key)
+      amount: result.amount,
+      currency: result.currency,
+      name: "Restro",
+      description: "Food order payment",
+      order_id: result.orderId,
+      handler: async function (response) {
+        try {
+          // Verify payment by sending data to backend
+          const verify = await verifypaymentApi({
+            paymentId: result.paymentId,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          });
+
+          if (verify?.success) {
+            toast.success("Payment successful!");
+          } else {
+            toast.error("Payment verification failed!");
+          }
+        } catch (error) {
+          console.log("Error verifying payment:", error);
+          
+        }
+      },
+      prefill: {
+        name: "Dinesh Sharma",
+        email: "dineshgarig@gmail.com",
+        contact: "7015190602",
+      },
+      theme: {
+        color: "#0f766e",
+      },
+    };
+
+    // 3️⃣ Open Razorpay payment window
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+
+    // 4️⃣ Handle failure
+    rzp.on("payment.failed", function (response) {
+      toast.error("Payment failed");
+      console.error("Payment error:", response.error);
+    });
+  } catch (error) {
+    console.log("Error in Razorpay checkout:", error);
+    toast.error("Something went wrong during checkout");
+  }
+};
 
   const totalPrice = cartItems.reduce((acc, item) => acc + item.totalPrice, 0);
 
